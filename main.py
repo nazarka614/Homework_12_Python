@@ -1,40 +1,32 @@
+from video_manager.media_player import Player
+from video_manager.films_worker import Film
 import os
-import csv
-import json
+import string
 
-from ganres import ganres
-from data import films_data
+player_1 = Player("rickroll", "https://youtu.be/pqafKhbl1Rg?si=h7-REl3iYPCRtOnc", 777)
+print(player_1.play("https://youtu.be/pqafKhbl1Rg?si=h7-REl3iYPCRtOnc"))
+print(f"Video is playing: {player_1.playing}")
+player_1.pause()
+print(f"Video is playing: {player_1.playing}")
 
-ganres_dict = json.loads(ganres)
+print(f"Current video quality: {player_1.quality}")
+player_1.change_quality("4K")
+print(f"Updated video quality: {player_1.quality}")
 
-genre_directories = {}
-for genre_info in ganres_dict['results']:
-    genre_name = genre_info['genre']
-    directory_path = os.path.join(os.getcwd(), genre_name)
-    os.makedirs(directory_path, exist_ok=True)
+print(os.getcwd())
+os.chdir("film_player")
+print(os.getcwd())
+os.mkdir("film_storage")
+os.chdir("film_storage")
+for letter in string.ascii_uppercase:
+    os.mkdir(letter)
 
-    csv_file_path = os.path.join(directory_path, f'{genre_name}_movies.csv')
+films = [
+    Film("Inception", 2010),
+    Film("The Shawshank Redemption", 1994),
+    Film("The Dark Knight", 2008),
+    Film("Pulp Fiction", 1994)
+]
 
-    with open(csv_file_path, mode='w', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['title', 'year', 'rating', 'type', 'genres']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-
-    genre_directories[genre_name] = csv_file_path
-
-for film in films_data:
-    title = film['title']
-    year = film['year']
-    rating = film['rating']
-    film_type = film['type']
-    genres = ";".join([genre['genre'] for genre in film['gen']])
-
-    for genre in film['gen']:
-        genre_name = genre['genre']
-        csv_file_path = genre_directories.get(genre_name)
-
-        if csv_file_path:
-            with open(csv_file_path, mode='a', newline='', encoding='utf-8') as csvfile:
-                fieldnames = ['title', 'year', 'rating', 'type', 'genres']
-                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                writer.writerow({'title': title, 'year': year, 'rating': rating, 'type': film_type, 'genres': genres})
+for i, film in enumerate(films, 1):
+    print(f"Film {i} address: {film.get_film_address()}")
